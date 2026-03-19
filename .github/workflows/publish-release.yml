@@ -1,13 +1,16 @@
-name: 'Publish Release'
+name: "Publish Release"
 on:
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag in format x.y.z[-pre]'
+        description: "Version tag in format x.y.z[-pre]"
         required: true
         type: string
 env:
-  dotnet_version: '10.0'
+  dotnet_version: "10.0"
 jobs:
   publish:
     strategy:
@@ -17,47 +20,55 @@ jobs:
         include:
           - os: windows-latest
             configuration: Release
-            target: '-windows'
+            target: "-windows"
             rid: win-x64
-            command_extra: ''
+            command_extra: ""
           - os: ubuntu-latest
             configuration: Linux
-            target: ''
+            target: ""
             rid: linux-x64
-            command_extra: ''
+            command_extra: ""
           - os: macos-latest
             configuration: MacOS
-            target: ''
-            rid: 'osx-arm64'
-            command_extra: '-t:BundleApp'
-    runs-on: '${{ matrix.os }}'
+            target: ""
+            rid: "osx-arm64"
+            command_extra: "-t:BundleApp"
+    runs-on: "${{ matrix.os }}"
     env:
-      version_full: '${{ github.ref_name }}'
-      version_short: '${{ github.ref_name }}'
-      artifact_name: 'PS3-Game-Dumper_vX.Y.Z.zip'
+      artifact_name: "PS3-Game-Dumper_vX.Y.Z.zip"
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: 'Replace full version with custom input value'
-        if: '${{ inputs.version }}'
-        shell: pwsh
-        run: 'Write-Output "version_full=${{ inputs.version }}" >> $env:GITHUB_ENV'
-      - name: 'Fix full version format'
+      - name: "Resolve release version"
+        id: version
         shell: pwsh
         run: |
-          $ver = '${{ env.version_full }}'.TrimStart('v')
-          Write-Output "version_full=$ver" >> $env:GITHUB_ENV
-      - name: 'Generate short version'
-        shell: pwsh
-        run: |
-          $ver = [SemVer]'${{ env.version_full }}'
-          $short_ver = "$($ver.Major).$($ver.Minor).$($ver.Patch)"
-          Write-Host "Got $short_ver from ${{ env.version_full }}"
-          Write-Output "version_short=$short_ver" >> $env:GITHUB_ENV
+          $versionFull = '${{ inputs.version || github.ref_name }}'
+          if (-not $versionFull)
+          {
+            throw 'No version provided. Push a tag like v1.0.0 or provide a workflow_dispatch version input.'
+          }
+
+          $versionFull = $versionFull.TrimStart('v')
+          $version = [SemVer]$versionFull
+          $versionShort = "$($version.Major).$($version.Minor).$($version.Patch)"
+          $isPrerelease = if ($version.PreRelease)
+          {
+            'true'
+          }
+          else
+          {
+            'false'
+          }
+
+          Write-Host "Building release version $versionFull"
+          Write-Output "version_full=$versionFull" >> $env:GITHUB_OUTPUT
+          Write-Output "version_short=$versionShort" >> $env:GITHUB_OUTPUT
+          Write-Output "is_prerelease=$isPrerelease" >> $env:GITHUB_OUTPUT
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '${{ env.dotnet_version }}.x'
+          dotnet-version: "${{ env.dotnet_version }}.x"
       - name: "Download current redump snapshot"
         shell: pwsh
         run: |
@@ -66,7 +77,7 @@ jobs:
           $fname = $response.Headers['Content-Disposition'].Split('=', 2)[1].Trim('"')
           Invoke-WebRequest -Uri $uri -OutFile "$fname"
           Write-Host "Got $fname"
-      - name: 'Build release'
+      - name: "Build release"
         run: >-
           dotnet publish
           -v:q
@@ -80,61 +91,61 @@ jobs:
           -p:PublishSingleFile=True
           -p:DebugType=None
           -p:DebugSymbols=False
-          -p:VersionPrefix=${{ env.version_short }}
-          -p:Version=${{ env.version_full }}
+          -p:VersionPrefix=${{ steps.version.outputs.version_short }}
+          -p:Version=${{ steps.version.outputs.version_full }}
           ${{ matrix.command_extra }}
-      - name: 'Make artifact'
+      - name: "Make artifact"
         shell: pwsh
         run: |
           cd distrib
           Get-ChildItem -Recurse | Write-Host
-          $artifact_name = "PS3-Game-Dumper_v${{ env.version_full }}.zip"
+          $artifact_name = "PS3-Game-Dumper_v${{ steps.version.outputs.version_full }}.zip"
           if ($IsWindows)
           {
-            $artifact_name = "PS3-Game-Dumper_windows_v${{ env.version_full }}.zip"
+            $artifact_name = "PS3-Game-Dumper_windows_v${{ steps.version.outputs.version_full }}.zip"
             Compress-Archive -LiteralPath PS3-Game-Dumper.exe -DestinationPath "$artifact_name" -CompressionLevel Optimal -Force
           }
           elseif ($IsLinux) # Compress-Archive does not preserve rwx attributes, so use zip on *nix
           {
-            $artifact_name = "PS3-Game-Dumper_linux_v${{ env.version_full }}.zip"
+            $artifact_name = "PS3-Game-Dumper_linux_v${{ steps.version.outputs.version_full }}.zip"
             zip -v9 "$artifact_name" PS3-Game-Dumper
           }
           elseif ($IsMacOs)
           {
-            $artifact_name = "PS3-Game-Dumper_macos_v${{ env.version_full }}.zip"
+            $artifact_name = "PS3-Game-Dumper_macos_v${{ steps.version.outputs.version_full }}.zip"
             codesign --deep -fs - 'PS3-Game-Dumper.app'
             zip -vr9 "$artifact_name" 'PS3-Game-Dumper.app/' -x '*.DS_Store'
           }
           Write-Output "artifact_name=$artifact_name" >> $env:GITHUB_ENV
-      - name: 'Create or update GitHub release draft'
-        if: ${{ inputs.version }}
+      - name: "Create or update GitHub release draft"
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: ncipollo/release-action@v1
         with:
-          commit: '${{ github.sha }}'
-          tag: 'v${{ env.version_full }}'
+          commit: "${{ github.sha }}"
+          tag: "v${{ steps.version.outputs.version_full }}"
           draft: true
-          prerelease: true
+          prerelease: ${{ steps.version.outputs.is_prerelease }}
           allowUpdates: true
+          artifactErrorsFailBuild: true
           generateReleaseNotes: true
-          artifacts: 'distrib/PS3-Game-Dumper_*.zip'
+          artifacts: "distrib/PS3-Game-Dumper_*.zip"
           artifactContentType: application/zip
           replacesArtifacts: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
-      - name: 'Create or update GitHub custom release draft'
+      - name: "Create or update GitHub release"
         if: ${{ github.event_name == 'push' }}
         uses: ncipollo/release-action@v1
         with:
-          draft: true
-          prerelease: true
+          tag: "v${{ steps.version.outputs.version_full }}"
+          draft: false
+          prerelease: ${{ steps.version.outputs.is_prerelease }}
           allowUpdates: true
+          artifactErrorsFailBuild: true
           generateReleaseNotes: true
-          artifacts: 'distrib/PS3-Game-Dumper_*.zip'
+          artifacts: "distrib/PS3-Game-Dumper_*.zip"
           artifactContentType: application/zip
           replacesArtifacts: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
-
-
