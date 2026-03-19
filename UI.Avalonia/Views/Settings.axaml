@@ -286,13 +286,21 @@
 
         <!-- about -->
         <TextBlock Classes="BodyStrongTextBlockStyle" Margin="0 31 0 0">About this app</TextBlock>
-        <TextBlock Margin="0 12 0 0" Text="{Binding DumperVersion, StringFormat=PS3 Disc Dumper v{0}}"/>
-        <TextBlock Margin="0 8 0 0" Text="{Binding CurrentYear, StringFormat=© {0} 13xforever}"/>
+        <TextBlock Margin="0 12 0 0" Text="{Binding DumperVersion, StringFormat=PS3-Game-Dumper v{0}}"/>
+        <TextBlock Margin="0 8 0 0" Text="{Binding CurrentYear, StringFormat=© {0} dash-dash-dev}"/>
+        <TextBlock Margin="0 8 0 0" TextWrapping="Wrap">Built on the work of 13xforever.</TextBlock>
         <StackPanel Orientation="Horizontal" Margin="0 12 0 0">
             <TextBlock FontFamily="{Binding SymbolFontFamily}" FontSize="16"
                        VerticalAlignment="Center" Margin="0 0 12 0" Text="{Binding HomeSymbol}"/>
             <Button Classes="Link" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding ProjectUrl}">
                 Project page
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+            <TextBlock FontFamily="{Binding SymbolFontFamily}" FontSize="16"
+                       VerticalAlignment="Center" Margin="0 0 12 0" Text="{Binding HomeSymbol}"/>
+            <Button Classes="Link" Command="{Binding OpenUrlCommand}" CommandParameter="{Binding OriginalProjectUrl}">
+                Original project
             </Button>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0 8 0 0">

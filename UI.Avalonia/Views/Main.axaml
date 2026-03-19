@@ -15,12 +15,12 @@
 			StepTitle="Disc check error"
 			StepSubtitle="Direct disk access to the drive was denied"
 			LastOperationSuccess="False"
-			LearnMoreLink="https://github.com/13xforever/ps3-disc-dumper/wiki/Direct-disk-access-to-the-drive-was-denied"
+			LearnMoreLink="https://github.com/dash-dash-dev/PS3-Game-Dumper/wiki/Direct-disk-access-to-the-drive-was-denied"
 
 			ProductCode="BLUS00001"
 			GameTitle="Super Long and Obnoxious Game Title That Makes Capcom's Super Ultra Deluxe Edition Look Tame"
 			DiscSizeInfo="6.9 GB (420 files)"
-			DiscSizeDiffInfoLink="https://github.com/13xforever/ps3-disc-dumper/wiki/Dump-size-is-significantly-different-from-disc-size"
+			DiscSizeDiffInfoLink="https://github.com/dash-dash-dev/PS3-Game-Dumper/wiki/Dump-size-is-significantly-different-from-disc-size"
 			DiscKeyName="BLUS00001.ird"
 			/>
 	</Design.DataContext>

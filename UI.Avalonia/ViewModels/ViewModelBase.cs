@@ -38,7 +38,7 @@ public partial class ViewModelBase: ObservableObject
     [ObservableProperty] private static string layer2BackgroundColor = "#ff0000"; //ThemeConsts.LightThemeLayerHover;
     [ObservableProperty] private static string layer2GroundedColor = "#7f0000"; //ThemeConsts.LightThemeLayerHover;
     [NotifyPropertyChangedFor(nameof(SettingsSymbol))]
-    [ObservableProperty] private static FontFamily symbolFontFamily = new("avares://ps3-disc-dumper/Assets/Fonts#Font Awesome 6 Free");
+    [ObservableProperty] private static FontFamily symbolFontFamily = new("avares://PS3-Game-Dumper/Assets/Fonts#Font Awesome 6 Free");
     [ObservableProperty] private static FontFamily largeFontFamily = FontManager.Current.DefaultFontFamily;
     [ObservableProperty] private static FontFamily smallFontFamily = FontManager.Current.DefaultFontFamily;
 
@@ -69,7 +69,7 @@ public partial class ViewModelBase: ObservableObject
         false;
 #endif
 
-    [ObservableProperty] protected string pageTitle = "PS3 Disc Dumper";// + Dumper.Version;
+    [ObservableProperty] protected string pageTitle = "PS3-Game-Dumper";// + Dumper.Version;
     [ObservableProperty] private bool canEditSettings = true;
     
     [RelayCommand]

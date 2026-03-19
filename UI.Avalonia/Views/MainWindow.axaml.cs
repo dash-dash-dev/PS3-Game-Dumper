@@ -51,15 +51,14 @@ public partial class MainWindow : Window
                 b.Height = 36;
             }
         }
-        
+
         OnLoadedPlatform();
         if (DataContext is not MainWindowViewModel mwvm)
             return;
-        
-        Dispatcher.UIThread.Post(() => { mwvm.CheckUpdatesAsync(); }, DispatcherPriority.Background);
+
         if (mwvm.CurrentPage is not MainViewModel mvm)
             return;
-        
+
         Dispatcher.UIThread.Post(() =>
         {
             Log.Debug("Main window is loaded, trying to scan the disc…");
@@ -76,10 +75,10 @@ public partial class MainWindow : Window
         OnClosingPlatform();
         if (DataContext is not MainWindowViewModel vm)
             return;
-        
+
         if (vm.CurrentPage is MainViewModel mvm)
             mvm.dumper?.Cts.Cancel();
-        
+
         vm.Dispose();
     }
 }

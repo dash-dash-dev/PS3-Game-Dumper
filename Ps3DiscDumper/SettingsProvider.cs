@@ -19,7 +19,7 @@ public static partial class SettingsProvider
         try
         {
             Log.Info("Loading settings…");
-            settingsFolder = Path.Combine(Environment.GetFolderPath(SpecialFolder.LocalApplicationData), "ps3-disc-dumper");
+            settingsFolder = Path.Combine(Environment.GetFolderPath(SpecialFolder.LocalApplicationData), "PS3-Game-Dumper");
             settingsPath = Path.Combine(settingsFolder, "settings.json");
             if (File.Exists(settingsPath))
             {
@@ -76,7 +76,7 @@ public static partial class SettingsProvider
                 return null;
 
             var lastUsedConfigPath = Directory
-                .GetDirectories(oldRootDir, "ps3-disc-dumper*", SearchOption.TopDirectoryOnly)
+                .GetDirectories(oldRootDir, "PS3-Game-Dumper*", SearchOption.TopDirectoryOnly)
                 .Select(d => Path.Combine(d,"1.0.0.0", "user.config"))
                 .Where(File.Exists)
                 .MaxBy(f => new FileInfo(f).LastWriteTime);

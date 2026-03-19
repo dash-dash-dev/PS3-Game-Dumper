@@ -34,7 +34,7 @@ jobs:
     env:
       version_full: '${{ github.ref_name }}'
       version_short: '${{ github.ref_name }}'
-      artifact_name: 'ps3-disc-dumper_vX.Y.Z.zip'
+      artifact_name: 'PS3-Game-Dumper_vX.Y.Z.zip'
     permissions:
       contents: write
     steps:
@@ -88,22 +88,22 @@ jobs:
         run: |
           cd distrib
           Get-ChildItem -Recurse | Write-Host
-          $artifact_name = "ps3-disc-dumper_v${{ env.version_full }}.zip"
+          $artifact_name = "PS3-Game-Dumper_v${{ env.version_full }}.zip"
           if ($IsWindows)
           {
-            $artifact_name = "ps3-disc-dumper_windows_v${{ env.version_full }}.zip"
-            Compress-Archive -LiteralPath ps3-disc-dumper.exe -DestinationPath "$artifact_name" -CompressionLevel Optimal -Force
+            $artifact_name = "PS3-Game-Dumper_windows_v${{ env.version_full }}.zip"
+            Compress-Archive -LiteralPath PS3-Game-Dumper.exe -DestinationPath "$artifact_name" -CompressionLevel Optimal -Force
           }
           elseif ($IsLinux) # Compress-Archive does not preserve rwx attributes, so use zip on *nix
           {
-            $artifact_name = "ps3-disc-dumper_linux_v${{ env.version_full }}.zip"
-            zip -v9 "$artifact_name" ps3-disc-dumper
+            $artifact_name = "PS3-Game-Dumper_linux_v${{ env.version_full }}.zip"
+            zip -v9 "$artifact_name" PS3-Game-Dumper
           }
           elseif ($IsMacOs)
           {
-            $artifact_name = "ps3-disc-dumper_macos_v${{ env.version_full }}.zip"
-            codesign --deep -fs - 'PS3 Disc Dumper.app'
-            zip -vr9 "$artifact_name" 'PS3 Disc Dumper.app/' -x '*.DS_Store'
+            $artifact_name = "PS3-Game-Dumper_macos_v${{ env.version_full }}.zip"
+            codesign --deep -fs - 'PS3-Game-Dumper.app'
+            zip -vr9 "$artifact_name" 'PS3-Game-Dumper.app/' -x '*.DS_Store'
           }
           Write-Output "artifact_name=$artifact_name" >> $env:GITHUB_ENV
       - name: 'Create or update GitHub release draft'
@@ -116,7 +116,7 @@ jobs:
           prerelease: true
           allowUpdates: true
           generateReleaseNotes: true
-          artifacts: 'distrib/ps3-disc-dumper_*.zip'
+          artifacts: 'distrib/PS3-Game-Dumper_*.zip'
           artifactContentType: application/zip
           replacesArtifacts: true
           omitBodyDuringUpdate: true
@@ -130,7 +130,7 @@ jobs:
           prerelease: true
           allowUpdates: true
           generateReleaseNotes: true
-          artifacts: 'distrib/ps3-disc-dumper_*.zip'
+          artifacts: 'distrib/PS3-Game-Dumper_*.zip'
           artifactContentType: application/zip
           replacesArtifacts: true
           omitBodyDuringUpdate: true

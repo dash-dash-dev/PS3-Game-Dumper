@@ -20,16 +20,16 @@ Get-ChildItem -LiteralPath distrib -Include *.pdb,*.config -Recurse | Remove-Ite
 
 if (($LASTEXITCODE -eq 0) -and ($IsMacOS -or ($PSVersionTable.Platform -eq 'Unix')))
 {
-    chmod +x distrib/gui/mac/ps3-disc-dumper
+    chmod +x distrib/gui/mac/PS3-Game-Dumper
     # The final app bundle needs to be re-signed as a whole.
-    codesign --deep -fs - 'distrib/gui/mac/PS3 Disc Dumper.app'
+    codesign --deep -fs - 'distrib/gui/mac/PS3-Game-Dumper.app'
 }
 
 Write-Host 'Bundling...' -ForegroundColor Cyan
-if (Test-Path -LiteralPath 'distrib/gui/mac/PS3 Disc Dumper.app')
+if (Test-Path -LiteralPath 'distrib/gui/mac/PS3-Game-Dumper.app')
 {
     # tar to preserve file permissions.
-    tar -C distrib/gui/mac -cvzf distrib/ps3-disc-dumper_macos_NEW.tar.gz 'PS3 Disc Dumper.app'
+    tar -C distrib/gui/mac -cvzf distrib/PS3-Game-Dumper_macos_NEW.tar.gz 'PS3-Game-Dumper.app'
 }
 
 Write-Host 'Done' -ForegroundColor Cyan

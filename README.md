@@ -1,6 +1,7 @@
-PS3 Disc Dumper
+PS3-Game-Dumper
 ===============
 This is a small utility to make decrypted copies of the PS3 game discs, suitable for use in emulators.
+It is built on the work of [13xforever](https://github.com/13xforever/ps3-disc-dumper).
 
 It does require a [compatible blu-ray drive](https://rpcs3.net/quickstart#dumping_drives) and existence of a matching [disc key](http://www.psdevwiki.com/ps3/Bluray_disc#IRD_file) to work.
 
@@ -13,8 +14,8 @@ Requirements
 
 How to use
 ==========
-1. Put `ps3-disc-dumper` executable in any folder
-   * On Linux make the file executable (via `Properties > Permissions` or via console command `$ chmod +x ./ps3-disc-dumper`)
+1. Put `PS3-Game-Dumper` executable in any folder
+   * On Linux make the file executable (via `Properties > Permissions` or via console command `$ chmod +x ./PS3-Game-Dumper`)
 2. Start the dumper
 3. Follow the instructions
     * On Linux you may need to confirm auto-mount or to mount the disc manually (either through file manager or via console command `$ mount`)

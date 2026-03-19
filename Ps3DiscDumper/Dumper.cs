@@ -38,7 +38,7 @@ public partial class Dumper : IDisposable
 
     static Dumper()
     {
-        Log.Info($"PS3 Disc Dumper v{Version}");
+        Log.Info($"PS3-Game-Dumper v{Version}");
         Log.Info($"Running on {RuntimeInformation.OSDescription}");
     }
 
@@ -1016,52 +1016,6 @@ public partial class Dumper : IDisposable
         else
             Log.Warn($"Completed with {BrokenFiles.Count} broken file{(BrokenFiles.Count == 1 ? "" : "s")}");
     }
-
-    public static async Task<(Version, GitHubReleaseInfo)> CheckUpdatesAsync()
-    {
-        try
-        {
-            using var client = new HttpClient();
-            var versionParts = VersionParts();
-            var curVerMatch = versionParts.Match(Version);
-            var curVerStr = curVerMatch.Groups["ver"].Value;
-            var curVerPre = curVerMatch.Groups["pre"].Value;
-            client.DefaultRequestHeaders.UserAgent.Add(new("PS3DiscDumper", curVerStr));
-            var responseJson = await client.GetStringAsync("https://api.github.com/repos/13xforever/ps3-disc-dumper/releases").ConfigureAwait(false);
-            var releaseList = JsonSerializer.Deserialize(responseJson, GithubReleaseSerializer.Default.GitHubReleaseInfoArray)?
-                .OrderByDescending(r => System.Version.TryParse(r.TagName.TrimStart('v'), out var v) ? v : null)
-                .ToList();
-            var latest = releaseList?.FirstOrDefault(r => !r.Prerelease);
-            var latestBeta = releaseList?.FirstOrDefault(r => r.Prerelease);
-            System.Version.TryParse(curVerStr, out var curVer);
-            System.Version.TryParse(latest?.TagName.TrimStart('v') ?? "0", out var latestVer);
-            var latestBetaMatch = versionParts.Match(latestBeta?.TagName ?? "");
-            var latestBetaVerStr = latestBetaMatch.Groups["ver"].Value;
-            var latestBetaVerPre = latestBetaMatch.Groups["pre"].Value;
-            System.Version.TryParse("0" + latestBetaVerStr, out var latestBetaVer);
-            if (latestVer > curVer || latestVer == curVer && curVerPre is { Length: > 0 })
-            {
-                Log.Warn($"Newer version available: v{latestVer}\n\n{latest?.Name}\n{"".PadRight(latest?.Name.Length ?? 0, '-')}\n{latest?.Body}\n{latest?.HtmlUrl}\n");
-                return (latestVer, latest);
-            }
-
-            if (latestBetaVer > curVer
-                || (latestBetaVer == curVer
-                    && curVerPre is { Length: > 0 }
-                    && (latestBetaVerPre is { Length: > 0 } && StringComparer.OrdinalIgnoreCase.Compare(latestBetaVerPre, curVerPre) > 0
-                        || latestBetaVerStr is null or "")))
-            {
-                Log.Warn($"Newer prerelease version available: v{latestBeta!.TagName.TrimStart('v')}\n\n{latestBeta?.Name}\n{"".PadRight(latestBeta?.Name.Length ?? 0, '-')}\n{latestBeta?.Body}\n{latestBeta?.HtmlUrl}\n");
-                return (latestBetaVer, latestBeta);
-            }
-        }
-        catch
-        {
-            Log.Warn("Failed to check for updates");
-        }
-        return (null, null);
-    }
-
 
     private async Task<(List<FileRecord> files, List<DirRecord> dirs)> GetFilesystemStructureAsync(CancellationToken cancellationToken)
     {
