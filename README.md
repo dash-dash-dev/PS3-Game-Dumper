@@ -37,12 +37,12 @@ Windows 11
   <img alt="Screenshot running on Windows 11" src="./screenshots/windows11-dark.png">
 </picture>
 
-Fedora 39
+Arch KDE
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./screenshots/fedora-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./screenshots/fedora-light.png">
-  <img alt="Screenshot running on Fedora 38" src="./screenshots/fedora-dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./screenshots/Arch-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./screenshots/Arch-light.png">
+  <img alt="Screenshot running on Arch KDE" src="./screenshots/fedora-dark.png">
 </picture>
 
 Building
